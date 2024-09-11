@@ -9,16 +9,13 @@ import java.util.Arrays;
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        int a,b,c;
-
-        a = Integer.parseInt(bufferedReader.readLine());
-        b = Integer.parseInt(bufferedReader.readLine());
-        c = Integer.parseInt(bufferedReader.readLine());
-
-        int [] table = {a,b,c};
+        int[] table = new int[3];
+        
+        table[0] = Integer.parseInt(bufferedReader.readLine());
+        table[1] = Integer.parseInt(bufferedReader.readLine());
+        table[2] = Integer.parseInt(bufferedReader.readLine());
+        
         Arrays.sort(table);
-
         System.out.println(table[1]);
-
     }
 }
