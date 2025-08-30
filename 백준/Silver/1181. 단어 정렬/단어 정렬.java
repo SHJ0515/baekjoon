@@ -11,32 +11,21 @@ public class Main {
         int n = Integer.parseInt(br.readLine());
 
 
-        Map<Integer, List<String>> wordMap = new TreeMap<>();
+        Map<Integer, Set<String>> wordMap = new TreeMap<>();
 
         for (int i = 0; i < n; i++) {
             String s = br.readLine();
+            int len = s.length();
 
-            //문자열 길이가 key로 있는 경우 -> 해당 value 리스트에 해당 string이 있다면 pass, 없다면 리스트에 넣기
-            if (wordMap.containsKey(s.length())) {
-                List<String> targetList = wordMap.get(s.length());
-                if (!targetList.contains(s)) {
-                    targetList.add(s);
-                }
-            }
-            //문자열 길이가 key로 없는 경우 -> map에 새로 key value 삽입
-            else {
-                List<String> list = new ArrayList<>();
-                list.add(s);
-                wordMap.put(s.length(), list);
-            }
+            // key에 len 이 없으면 새로운 TreeSet 생성, 있으면 기존거 가져오기.
+            // TreeSet 은 넣을때부터 중복제거 및 사전순 정렬 해줌. 
+            wordMap.computeIfAbsent(len, k -> new TreeSet<>()).add(s);
         }
 
-        for (List<String> value : wordMap.values()) {
-            value.sort(Comparator.naturalOrder());
+        for (Set<String> value : wordMap.values()) {
             for (String s : value) {
                 System.out.println(s);
             }
         }
-
     }
 }
