@@ -1,31 +1,28 @@
-
 import java.util.*;
 import java.io.*;
 
-class Main {
-    public static void main(String args[]) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        Scanner sc = new Scanner(System.in);
+public class Main {
+    public static void main(String[] args) throws IOException {
 
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringBuilder sb = new StringBuilder();
 
+        String[] split = br.readLine().split(" ");
+        int n = Integer.parseInt(split[0]);
+        int x = Integer.parseInt(split[1]);
 
-        int n = sc.nextInt();
-        int x = sc.nextInt();
+        String[] split1 = br.readLine().split(" ");
 
-        List<Integer> list = new ArrayList<>();
-
-        for (int i = 0; i < n; i++) {
-            int t = sc.nextInt();
-            if (t < x){
-                list.add(t);
+        for (String s : split1) {
+            int num = Integer.parseInt(s);
+            if (num < x){
+                sb.append(num+ " ");
             }
         }
-
-        for (Integer i : list) {
-            sb.append(i + " ");
-        }
-
-        System.out.println(sb.toString());
+        System.out.println(sb);
+        
+        bw.flush();
+        bw.close();
     }
 }
