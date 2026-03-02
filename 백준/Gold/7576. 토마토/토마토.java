@@ -2,94 +2,71 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-
-    public static class Node {
-        int x;
-        int y;
-        int day;   // 익는 날짜
-
-        public Node(int x, int y, int day) {
-            this.x = x;
-            this.y = y;
-            this.day = day;
+    // 1. Node 클래스에서 day를 제거하고 map에 직접 거리를 기록하는 방식으로 최적화 가능
+    static class Node {
+        int r, c;
+        Node(int r, int c) {
+            this.r = r;
+            this.c = c;
         }
     }
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        String[] split = br.readLine().split(" ");
-        int n = Integer.parseInt(split[1]);
-        int m = Integer.parseInt(split[0]);
+        int m = Integer.parseInt(st.nextToken()); // 가로
+        int n = Integer.parseInt(st.nextToken()); // 세로
 
-        int[][] map = new int[n][m];          // 0 안익음 / 1 익음 / -1 벽
-        int[][] visited = new int[n][m];      // 0 미방문 / 1 방문 / -1 방문 불가(벽)
-        int[] dx = {1, 0, -1, 0};
-        int[] dy = {0, 1, 0, -1};
-
-        for (int i = 0; i < n; i++) {
-            String[] split1 = br.readLine().split(" ");
-            for (int j = 0; j < m; j++) {
-                map[i][j] = Integer.parseInt(split1[j]);
-                if (map[i][j] == -1) {
-                    visited[i][j] = -1;
-                }
-            }
-        }
-
+        int[][] map = new int[n][m];
         Queue<Node> queue = new ArrayDeque<>();
-        //익어 있는 토마토들
+        int unripeCount = 0; // 안 익은 토마토 개수 추적
+
+        // 2. 입력과 동시에 익은 토마토는 큐에 넣고, 안 익은 토마토는 카운트합니다.
         for (int i = 0; i < n; i++) {
+            st = new StringTokenizer(br.readLine());
             for (int j = 0; j < m; j++) {
+                map[i][j] = Integer.parseInt(st.nextToken());
                 if (map[i][j] == 1) {
-                    visited[i][j] = 1;
-                    Node first = new Node(i, j, 0);
-                    queue.add(first);
+                    queue.add(new Node(i, j));
+                } else if (map[i][j] == 0) {
+                    unripeCount++;
                 }
             }
         }
 
-        int maxDay = 0;
+        // 처음부터 다 익어있는 상태라면 바로 0 출력
+        if (unripeCount == 0) {
+            System.out.println(0);
+            return;
+        }
 
-        while (!queue.isEmpty()) {
-            Node currentNode = queue.poll();
-            if (currentNode.day > maxDay) {
-                maxDay = currentNode.day;
-            }
+        int[] dr = {1, -1, 0, 0};
+        int[] dc = {0, 0, 1, -1};
+        int days = 0;
 
-            for (int i = 0; i < 4; i++) {
-                int nx = currentNode.x + dx[i];
-                int ny = currentNode.y + dy[i];
+        // 3. BFS 시작
+        while (!queue.isEmpty() && unripeCount > 0) {
+            int size = queue.size();
+            days++; // 한 "레벨(하루)"씩 탐색
 
-                if (nx >= 0 && nx < n && ny >= 0 && ny < m) {
-                    if (visited[nx][ny] == 0 && map[nx][ny] != -1) {
-                        Node nextNode = new Node(nx, ny, currentNode.day + 1);
-                        queue.add(nextNode);
-                        visited[nx][ny] = 1;
+            for (int i = 0; i < size; i++) {
+                Node curr = queue.poll();
+
+                for (int d = 0; d < 4; d++) {
+                    int nr = curr.r + dr[d];
+                    int nc = curr.c + dc[d];
+
+                    if (nr >= 0 && nr < n && nc >= 0 && nc < m && map[nr][nc] == 0) {
+                        map[nr][nc] = 1; // 익음 처리 (visited 역할 겸함)
+                        unripeCount--;   // 남은 개수 감소
+                        queue.add(new Node(nr, nc));
                     }
                 }
             }
         }
 
-        boolean flag = true;
-
-        for (int i = 0; i < n; i++) {
-            if (flag) {
-                for (int j = 0; j < m; j++) {
-                    if (visited[i][j] == 0) {
-                        flag = false;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (flag){
-            System.out.println(maxDay);
-        }
-        else {
-            System.out.println(-1);
-        }
+        // 4. 모든 탐색 후에도 안 익은 토마토가 남았다면 -1, 아니면 경과일 출력
+        System.out.println(unripeCount == 0 ? days : -1);
     }
 }
