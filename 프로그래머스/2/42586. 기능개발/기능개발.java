@@ -1,42 +1,47 @@
+
 import java.util.*;
-import java.io.*;
 
 class Solution {
     public int[] solution(int[] progresses, int[] speeds) {
-        int[] answer;
         List<Integer> list = new ArrayList<>();
-        
+
         int[] dayCount = new int[progresses.length];
-        for(int i=0; i < progresses.length; i++){
-            if((100 - progresses[i]) % speeds[i] == 0){
+
+        for (int i = 0; i < progresses.length; i++) {
+            if ((100 - progresses[i]) % speeds[i] == 0) {
                 dayCount[i] = (100 - progresses[i]) / speeds[i];
-            }
-            else{
+            } else {
                 dayCount[i] = (100 - progresses[i]) / speeds[i];
                 dayCount[i] += 1;
             }
         }
-        
-        int idx = 0;
-        int count = 0;
-        for(int i = 0; i < dayCount.length; i++){
-            if (dayCount[idx] < dayCount[i]){
-                list.add(count);
-                idx = i;
-                count = 1;
-            }
-            else{
+
+
+        Deque<Integer> deque = new ArrayDeque<>();
+
+        for (int day : dayCount) {
+            deque.offerFirst(day);
+        }
+
+
+        while (!deque.isEmpty()) {
+            int baseDay = deque.removeLast();
+            int count = 1;
+
+            while (!deque.isEmpty() && deque.peekLast() <= baseDay) {
+                deque.removeLast();
                 count++;
             }
-        }
-        list.add(count);
-        
-        answer = new int[list.size()];
-        int tmp = 0;
-        for(int n : list){
-            answer[tmp++] = n;
+
+            list.add(count);
         }
         
+        int[] answer = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            answer[i] = list.get(i);
+        }
+
         return answer;
     }
 }
+
